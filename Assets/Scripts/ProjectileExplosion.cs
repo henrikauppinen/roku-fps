@@ -10,14 +10,14 @@ public class ProjectileExplosion : MonoBehaviour {
 	public AudioClip bounceSound;
 	public AudioClip explosionSound;
 
-	private bool explodeOnTouch = true;
+	private bool explodeOnTouch = false;
+	private bool hasExploded = false;
 
 	//private bool fuseStarted = false;
 	private WaitForSeconds fuseLength = new WaitForSeconds(3f);
 
 	void Start() {
 		audioSource = GetComponent<AudioSource>();
-		StartCoroutine(fuse());
 	}
 
 	public void armProjectile(bool instantExplode) {
@@ -30,12 +30,8 @@ public class ProjectileExplosion : MonoBehaviour {
 	}
 
 	void OnCollisionEnter() {
-
-		if(explodeOnTouch) {
-			explode();
-		}
-		else {
-			audioSource.PlayOneShot(bounceSound, 0.5f);	
+		if(explodeOnTouch && !hasExploded) {
+			StartCoroutine(explode());
 		}
 	}
 
@@ -44,24 +40,23 @@ public class ProjectileExplosion : MonoBehaviour {
 	}
 
 	private IEnumerator fuse() {
-		
 		yield return fuseLength;
-
-		GameObject p = explode();
-				
-		// particle effect duration is approx +10 seconds
-		yield return new WaitForSeconds(11f);
-		Destroy(p);
-		Destroy(gameObject);
+		yield return StartCoroutine( explode() );
 	}
 
-	private GameObject explode() {
+	private IEnumerator explode() {
+		hasExploded = true;
+
 		GameObject p = Instantiate(explosion, transform.position, Quaternion.identity) as GameObject;
 		p.GetComponent<ParticleSystem>().Play();
 		audioSource.PlayOneShot(explosionSound);
 		GetComponent<Renderer>().enabled = false;
 
-		return p;
+		// particle effect duration is approx +10 seconds
+		yield return new WaitForSeconds(11f);
+
+		Destroy(p);
+		Destroy(gameObject);
 	}
 
 }

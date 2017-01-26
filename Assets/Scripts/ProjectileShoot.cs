@@ -25,18 +25,18 @@ public class ProjectileShoot : MonoBehaviour {
 
 	void Update () {
 		if(Input.GetButtonDown("Fire1") && Time.time > nextFireTime) {
-			Fire();
+			Fire(true);
 		}
 		
 		// firemode 2, bouncy grenade
 		if(Input.GetButtonDown("Fire2") && Time.time > nextFireTime) {
-			Fire();
+			Fire(false);
 		}
 	}
 
-	private void Fire() {
+	private void Fire(bool explodeOnTouch) {
 		Rigidbody cloneRb = Instantiate(projectile, spawnPoint.position, Quaternion.identity) as Rigidbody;
-		cloneRb.GetComponent<ProjectileExplosion>().armProjectile(true);
+		cloneRb.GetComponent<ProjectileExplosion>().armProjectile(explodeOnTouch);
 		
 		cloneRb.AddForce(spawnPoint.forward * projectileForce);
 		
