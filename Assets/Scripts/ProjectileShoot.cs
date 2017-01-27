@@ -35,7 +35,7 @@ public class ProjectileShoot : MonoBehaviour {
 	}
 
 	private void Fire(bool explodeOnTouch) {
-		Rigidbody cloneRb = Instantiate(projectile, spawnPoint.position, Quaternion.identity) as Rigidbody;
+		Rigidbody cloneRb = Instantiate(projectile, spawnPoint.position, transform.rotation) as Rigidbody;
 		cloneRb.GetComponent<ProjectileExplosion>().armProjectile(explodeOnTouch);
 		
 		cloneRb.AddForce(spawnPoint.forward * projectileForce);
